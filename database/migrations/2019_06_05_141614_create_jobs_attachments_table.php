@@ -13,7 +13,7 @@ class CreateJobsAttachmentsTable extends Migration
      */
     public function up()
     {
-        Schema::table('jobs_attachments', function (Blueprint $table) {
+        Schema::create('jobs_attachments', function (Blueprint $table) {
             $table->bigIncrements('id');
 
             $table->integer('job_id')->unsigned();
