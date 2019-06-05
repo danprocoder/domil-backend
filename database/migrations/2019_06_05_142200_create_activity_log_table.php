@@ -13,7 +13,7 @@ class CreateActivityLogTable extends Migration
      */
     public function up()
     {
-        Schema::table('activity_log', function (Blueprint $table) {
+        Schema::create('activity_log', function (Blueprint $table) {
             $table->bigIncrements('id');
 
             $table->integer('user_id')->unsigned();

@@ -6,6 +6,7 @@ use App\User;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Http\Request;
 use Illuminate\Foundation\Auth\RegistersUsers;
 
 class RegisterController extends Controller
@@ -49,9 +50,17 @@ class RegisterController extends Controller
     protected function validator(array $data)
     {
         return Validator::make($data, [
-            'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
-            'password' => ['required', 'string', 'min:8', 'confirmed'],
+            'password' => ['required', 'string', 'min:8'],
+            'mobile' => ['required', 'regex:/^[0-9]{10}$/']
+        ], [
+            'email.reqiured' => 'Please provide an email address',
+            'email.email' => 'Email address is not valid',
+            'email.unique' => 'Email address already taken by another user',
+            'password.required' => 'Password is required',
+            'password.min' => 'Password should be atleast 8 characters',
+            'mobile.required' => 'Mobile number is required',
+            'mobile.regex' => 'Mobile number is not valid',
         ]);
     }
 
@@ -61,12 +70,45 @@ class RegisterController extends Controller
      * @param  array  $data
      * @return \App\User
      */
-    protected function create(array $data)
+    function create(Request $request)
     {
-        return User::create([
-            'name' => $data['name'],
-            'email' => $data['email'],
-            'password' => Hash::make($data['password']),
-        ]);
+        $data = $request->all();
+        $validator = $this->validator($data);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'errors' => $validator->errors(),
+            ], 400);
+        } else {
+            $email = strtolower($data['email']);
+            $mobile = $this->addCountryCode($data['mobile']);
+            $mobileVerCode = rand(100000, 999999);
+
+            $user = User::create([
+                'email' => $email,
+                'email_verification_code' => $this->generateEmailVerificationCode(),
+                'mobile' => $mobile,
+                'mobile_verification_code' => $mobileVerCode,
+                'password' => Hash::make($data['password']),
+            ]);
+
+            return response()->json([
+                'token' => null,
+                'data' => $user,
+            ], 201);
+        }
+    }
+
+    function addCountryCode($mobile) {
+        return '+234'.$mobile;
+    }
+
+    function generateEmailVerificationCode() {
+        $charset = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_-';
+        $code = '';
+        for ($i = 0; $i < 24; $i++) {
+            $code .= $charset[rand(0, strlen($charset) - 1)];
+        }
+        return $code;
     }
 }
