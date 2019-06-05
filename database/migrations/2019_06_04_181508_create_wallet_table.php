@@ -14,7 +14,11 @@ class CreateWalletTable extends Migration
     public function up()
     {
         Schema::table('wallet', function (Blueprint $table) {
-            //
+            $table->bigIncrement('id');
+            $table->integer('brand_id')->unsigned();
+            $table->integer('amount');
+            $table->integer('balance');
+            $table->timestamps();
         });
     }
 
@@ -25,8 +29,6 @@ class CreateWalletTable extends Migration
      */
     public function down()
     {
-        Schema::table('wallet', function (Blueprint $table) {
-            //
-        });
+        Schema::dropIfExists('wallet');
     }
 }
