@@ -35,5 +35,5 @@ Response:
 }
 ```
 
-### POST /api/user/verify/mobile
+### GET /api/user/verify/mobile
 Verify the user's inputted code with the code sent to the user's mobile device on registration.
