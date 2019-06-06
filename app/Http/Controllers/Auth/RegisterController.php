@@ -117,11 +117,16 @@ class RegisterController extends Controller
         }
     }
 
-    function addCountryCode($mobile) {
+    function addCountryCode($mobile)
+    {
+        if (preg_match('/^\+234/', $mobile)) {
+            return $mobile;
+        }
         return '+234'.$mobile;
     }
 
-    function generateEmailVerificationCode() {
+    function generateEmailVerificationCode()
+    {
         $charset = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_-';
         $code = '';
         for ($i = 0; $i < 24; $i++) {
