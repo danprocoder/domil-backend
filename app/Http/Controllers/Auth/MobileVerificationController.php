@@ -26,8 +26,27 @@ class MobileVerificationController extends Controller
             return Response::error(['message' => $validator->errors()]);
         } else {
             $user = $request->get('user');
+            if ($user->mobile_verified_at != null) {
+                return Response::error([
+                    'message' => 'Mobile number already verified'
+                ]);
+            }
 
-            return Response::success(['message' => $user]);
+            $code = $request->input('code');
+
+            if ($code == $user->mobile_verification_code) {
+                $user->update([
+                    'mobile_verified_at' => \Carbon\Carbon::now()
+                ]);
+
+                return Response::success([
+                    'message' => 'Mobile number verified successfully'
+                ]);
+            } else {
+                return Response::error([
+                    'message' => 'Mobile verification code is incorrect'
+                ]);
+            }
         }
     }
 }
