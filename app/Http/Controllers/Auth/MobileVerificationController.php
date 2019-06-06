@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\Controller;
 use App\Helpers\Response;
+use App\Helpers\Sms;
 
 class MobileVerificationController extends Controller
 {
@@ -48,5 +49,25 @@ class MobileVerificationController extends Controller
                 ]);
             }
         }
+    }
+
+    function resendCode(Request $request)
+    {
+        $user = $request->get('user');
+
+        if ($user->mobile_verified_at != null) {
+            return Response::error([
+                'message' => 'Mobile number already verified'
+            ]);
+        }
+
+        $newCode = rand(100000, 999999);
+        $user->update(['mobile_verification_code' => $newCode]);
+
+        Sms::sendMessage($user->mobile, $newCode);
+
+        return Response::success([
+            'message' => 'New verification code sent successfully'
+        ]);
     }
 }
