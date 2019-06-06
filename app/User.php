@@ -40,4 +40,8 @@ class User extends Authenticatable
     static function getByEmail($email) {
         return self::where('email', $email)->first();
     }
+
+    static function getById($id) {
+        return self::where('id', $id)->first();
+    }
 }

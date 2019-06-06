@@ -19,4 +19,4 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 
 Route::post('/user/create', 'Auth\RegisterController@create');
 Route::post('/user/auth', 'Auth\LoginController@authenticate');
-Route::get('/user/verify/mobile', 'Auth\MobileVerificationController@verifyCode');
+Route::get('/user/verify/mobile', 'Auth\MobileVerificationController@verifyCode')->middleware('check_api_token');

@@ -17,4 +17,14 @@ class Response
     {
         return response()->json($data, 400)->withHeaders($headers);
     }
+
+    static function unauthorized($data, $headers=[])
+    {
+        return response()->json($data, 401)->withHeaders($headers);
+    }
+
+    static function forbidden($data, $headers=[])
+    {
+        return response()->json($data, 403)->withHeaders($headers);
+    }
 }

@@ -25,7 +25,9 @@ class MobileVerificationController extends Controller
         if ($validator->fails()) {
             return Response::error(['message' => $validator->errors()]);
         } else {
-            return Response::success(['message' => 'It will verify now']);
+            $user = $request->get('user');
+
+            return Response::success(['message' => $user]);
         }
     }
 }
