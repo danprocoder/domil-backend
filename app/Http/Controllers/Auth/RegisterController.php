@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\User;
 use App\Http\Controllers\Controller;
+use App\Helpers\Session;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
@@ -52,7 +53,7 @@ class RegisterController extends Controller
         return Validator::make($data, [
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'string', 'min:8'],
-            'mobile' => ['required', 'regex:/^[0-9]{10}$/']
+            'mobile' => ['required', 'regex:/^\+234[0-9]{10}$/', 'unique:users']
         ], [
             'email.reqiured' => 'Please provide an email address',
             'email.email' => 'Email address is not valid',
@@ -60,6 +61,7 @@ class RegisterController extends Controller
             'password.required' => 'Password is required',
             'password.min' => 'Password should be atleast 8 characters',
             'mobile.required' => 'Mobile number is required',
+            'mobile.unique' => 'Mobile number already used by another user',
             'mobile.regex' => 'Mobile number is not valid',
         ]);
     }
@@ -73,6 +75,7 @@ class RegisterController extends Controller
     function create(Request $request)
     {
         $data = $request->all();
+        $data['mobile'] = $this->addCountryCode($data['mobile']);
         $validator = $this->validator($data);
 
         if ($validator->fails()) {
@@ -81,20 +84,29 @@ class RegisterController extends Controller
             ], 400);
         } else {
             $email = strtolower($data['email']);
-            $mobile = $this->addCountryCode($data['mobile']);
             $mobileVerCode = rand(100000, 999999);
 
             $user = User::create([
                 'email' => $email,
                 'email_verification_code' => $this->generateEmailVerificationCode(),
-                'mobile' => $mobile,
+                'mobile' => $data['mobile'],
                 'mobile_verification_code' => $mobileVerCode,
                 'password' => Hash::make($data['password']),
             ]);
 
+            $token = Session::create([
+                'user_id' => $user->id,
+            ]);
+            unset($user->id);
+
             return response()->json([
-                'token' => null,
-                'data' => $user,
+                'token' => $token,
+                'data' => [
+                    'email' => $email,
+                    'mobile' => $user->mobile,
+                    'email_verified' => false,
+                    'mobile_verified' => false
+                ],
             ], 201);
         }
     }
