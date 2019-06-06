@@ -6,6 +6,7 @@ use App\User;
 use App\Http\Controllers\Controller;
 use App\Helpers\Session;
 use App\Helpers\Response;
+use App\Helpers\Sms;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
@@ -94,6 +95,9 @@ class RegisterController extends Controller
                 'mobile_verification_code' => $mobileVerCode,
                 'password' => Hash::make($data['password']),
             ]);
+            
+            // Send text message to user's mobile number.
+            Sms::sendMessage($data['mobile'], $mobileVerCode);
 
             $token = Session::create([
                 'user_id' => $user->id,
@@ -113,11 +117,16 @@ class RegisterController extends Controller
         }
     }
 
-    function addCountryCode($mobile) {
+    function addCountryCode($mobile)
+    {
+        if (preg_match('/^\+234/', $mobile)) {
+            return $mobile;
+        }
         return '+234'.$mobile;
     }
 
-    function generateEmailVerificationCode() {
+    function generateEmailVerificationCode()
+    {
         $charset = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_-';
         $code = '';
         for ($i = 0; $i < 24; $i++) {
