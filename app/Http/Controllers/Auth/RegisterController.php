@@ -98,11 +98,12 @@ class RegisterController extends Controller
             $token = Session::create([
                 'user_id' => $user->id,
             ]);
-            unset($user->id);
 
             return Response::created([
                 'token' => $token,
                 'user' => [
+                    'firstname' => $user->firstname,
+                    'lastname' => $user->lastname,
                     'email' => $email,
                     'mobile' => $user->mobile,
                     'email_verified' => false,
