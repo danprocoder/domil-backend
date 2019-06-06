@@ -1,6 +1,6 @@
 # DOMIL APIs
 
-#### POST /api/user/create
+### POST /api/user/create
 Creates a new user account
 
 Required Fields:
@@ -18,7 +18,7 @@ Response:
 }
 ```
 
-#### POST /api/user/auth
+### POST /api/user/auth
 Authenticates the user
 
 Required Fields:
@@ -34,3 +34,6 @@ Response:
     user: [User object]
 }
 ```
+
+### POST /api/user/verify/mobile
+Verify the user's inputted code with the code sent to the user's mobile device on registration.
