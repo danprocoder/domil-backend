@@ -37,3 +37,27 @@ Response:
 
 ### GET /api/user/verify/mobile
 Verify the user's inputted code with the code sent to the user's mobile device on registration.
+
+Required parameters:
+1. code
+
+Response on success:
+Status code: 200
+Response:
+```
+{
+    message: 'Mobile number verified successfully'
+}
+```
+
+### GET /api/user/mobile-verification-code/resend
+Resend mobile verification code
+
+Response on success:
+Status code: 200
+Response:
+```
+{
+    message: 'Mobile verification code resent'
+}
+```
