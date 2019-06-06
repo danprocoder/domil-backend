@@ -16,7 +16,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'firstname', 'lastname', 'email', 'email_verification_code', 'mobile', 'mobile_verification_code', 'password',
+        'firstname', 'lastname', 'email', 'email_verification_code', 'mobile', 'mobile_verification_code', 'mobile_verified_at', 'password',
     ];
 
     /**
@@ -39,5 +39,9 @@ class User extends Authenticatable
 
     static function getByEmail($email) {
         return self::where('email', $email)->first();
+    }
+
+    static function getById($id) {
+        return self::where('id', $id)->first();
     }
 }
