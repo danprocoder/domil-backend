@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\User;
 use App\Http\Controllers\Controller;
 use App\Helpers\Session;
+use App\Helpers\Response;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
@@ -53,7 +54,7 @@ class RegisterController extends Controller
         return Validator::make($data, [
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'string', 'min:8'],
-            'mobile' => ['required', 'regex:/^\+234[0-9]{10}$/', 'unique:users']
+            'mobile' => ['required', 'regex:/^(\+234)?[0-9]{10}$/', 'unique:users']
         ], [
             'email.reqiured' => 'Please provide an email address',
             'email.email' => 'Email address is not valid',
@@ -75,14 +76,14 @@ class RegisterController extends Controller
     function create(Request $request)
     {
         $data = $request->all();
-        $data['mobile'] = $this->addCountryCode($data['mobile']);
         $validator = $this->validator($data);
 
         if ($validator->fails()) {
-            return response()->json([
+            return Response::error([
                 'errors' => $validator->errors(),
-            ], 400);
+            ]);
         } else {
+            $data['mobile'] = $this->addCountryCode($data['mobile']);
             $email = strtolower($data['email']);
             $mobileVerCode = rand(100000, 999999);
 
@@ -99,15 +100,15 @@ class RegisterController extends Controller
             ]);
             unset($user->id);
 
-            return response()->json([
+            return Response::created([
                 'token' => $token,
-                'data' => [
+                'user' => [
                     'email' => $email,
                     'mobile' => $user->mobile,
                     'email_verified' => false,
                     'mobile_verified' => false
                 ],
-            ], 201);
+            ]);
         }
     }
 
