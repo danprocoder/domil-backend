@@ -4,8 +4,8 @@ namespace App\Helpers;
 
 class Sms
 {
-    static function sendMessage()
+    static function sendMessage($recipient, $message)
     {
-
+        \Log::info("Sent '$message' to '$recipient'");
     }
 }
