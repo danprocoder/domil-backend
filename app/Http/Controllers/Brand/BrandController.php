@@ -54,4 +54,31 @@ class BrandController extends Controller
             ]);
         }
     }
+
+    function update(Request $request)
+    {
+        $user = $request->get('user');
+
+        $brand = Brand::getByUserId($user->id);
+        if (!$brand) {
+            return Response::error([
+                'message' => 'User has not created a brand'
+            ]);
+        }
+
+        $inputs = $request->all();
+
+        $updateData = [];
+        foreach (['name', 'address', 'about'] as $k) {
+            if (isset($inputs[$k])) {
+                $updateData[$k] = $inputs[$k];
+            }
+        }
+        $brand->update($updateData);
+
+        return Response::success([
+            'message' => 'User brand details updated successfully',
+            'brand' => $brand
+        ]);
+    }
 }

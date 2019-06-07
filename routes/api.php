@@ -23,4 +23,5 @@ Route::get('/user/verify/mobile', 'Auth\MobileVerificationController@verifyCode'
 Route::get('/user/mobile-verification-code/resend', 'Auth\MobileVerificationController@resendCode')->middleware('check_api_token');
 Route::patch('/user', 'Auth\EditProfileController@update')->middleware('check_api_token');
 
-Route::post('/brand/create', 'Brand\BrandController@create')->middleware('check_api_token');
+Route::post('/brand', 'Brand\BrandController@create')->middleware('check_api_token');
+Route::patch('/brand', 'Brand\BrandController@update')->middleware('check_api_token');
