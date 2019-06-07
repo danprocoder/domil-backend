@@ -29,7 +29,7 @@ class CheckSessionToken
         } elseif (time() > strtotime($sessionData->expires)) {
             return Response::unauthorized(['message' => 'Token has expired']);
         } else {
-            $user = User::getById($sessionData->id);
+            $user = User::getById($sessionData->user_id);
             if (!$user) {
                 return Response::unauthorized(['message' => 'User does not exists']);
             }
