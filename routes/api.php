@@ -21,3 +21,5 @@ Route::post('/user/create', 'Auth\RegisterController@create');
 Route::post('/user/auth', 'Auth\LoginController@authenticate');
 Route::get('/user/verify/mobile', 'Auth\MobileVerificationController@verifyCode')->middleware('check_api_token');
 Route::get('/user/mobile-verification-code/resend', 'Auth\MobileVerificationController@resendCode')->middleware('check_api_token');
+
+Route::post('/brand/create', 'Brand\BrandController@create')->middleware('check_api_token');
