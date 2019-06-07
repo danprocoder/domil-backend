@@ -62,7 +62,7 @@ Response:
 }
 ```
 
-### POST /api/brand/create
+### POST /api/brand
 Create a user's brand
 
 Required fields:
@@ -76,6 +76,24 @@ Response:
 ```
 {
     "message": "User's brand created successfully"
+}
+```
+
+### PATCH /api/brand
+Update a user's brand details
+
+Fields:
+1. Name (optional)
+2. Address (optional)
+3. About (optional)
+
+Response on success:
+Status code: 200
+Response:
+```
+{
+    "message": "User brand details updated successfully",
+    "brand": [Brand object]
 }
 ```
 
