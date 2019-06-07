@@ -61,3 +61,20 @@ Response:
     message: 'Mobile verification code resent'
 }
 ```
+
+### POST /api/brand/create
+Create a user's brand
+
+Required fields:
+1. Name
+2. Address
+3. About
+
+Response on success:
+Status code: 201
+Response:
+```
+{
+    "message": "User's brand created successfully"
+}
+```
