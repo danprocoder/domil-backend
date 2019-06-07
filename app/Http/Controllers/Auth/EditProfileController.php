@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\Controller;
 use App\Helpers\Session;
 use App\Helpers\Response;
+use App\Helpers\Sms;
 
 class EditProfileController extends Controller
 {
@@ -53,9 +54,20 @@ class EditProfileController extends Controller
                 if (isset($userInput[$k])) {
                     $updateData[$k] = $userInput[$k];
                 }
+
+                // Generate a new verification code for the user if the user changed his/her mobile number.
+                if ($k == 'mobile') {
+                    $updateData['mobile_verification_code'] = rand(100000, 999999);
+                    $updateData['mobile_verified_at'] = null;
+                }
             }
 
             $user->update($updateData);
+
+            // Send new verification code to user if the user updated his/her mobile number.
+            if (isset($updateData['mobile'])) {
+                Sms::sendMessage($user->mobile, $user->mobile_verification_code);
+            }
 
             return Response::success([
                 'message' => 'User details updated successfully',
