@@ -55,5 +55,3 @@ class BrandController extends Controller
         }
     }
 }
-
-// Close button on modal
