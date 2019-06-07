@@ -78,3 +78,22 @@ Response:
     "message": "User's brand created successfully"
 }
 ```
+
+### PATCH /api/user
+Update a users details
+
+Fields:
+1. firstname (optional)
+2. lastname (optional)
+3. email (optional)
+4. mobile (optional)
+
+Response on success:
+Status code: 200
+Response:
+```
+{
+    "message": "User details updated successfully",
+    "user": [User object]
+}
+```
