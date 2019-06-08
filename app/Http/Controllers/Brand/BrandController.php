@@ -15,11 +15,13 @@ class BrandController extends Controller
         return Validator::make($data, [
             'name' => 'required',
             'address' => 'required',
-            'about' => 'required'
+            'about' => 'required',
+            'logo' => ['nullable', 'regex:/^https:\/\//']
         ], [
             'name.required' => 'Your brand name is required',
             'address.required' => 'Your address is required',
-            'about.required' => 'About field is required'
+            'about.required' => 'About field is required',
+            'logo.regex' => 'Image URL is not valid'
         ]);
     }
 
@@ -42,15 +44,20 @@ class BrandController extends Controller
                 'errors' => $validator->errors(),
             ]);
         } else {
-            Brand::create([
+            $rowData = [
                 'user_id' => $user->id,
                 'name' => $userInputs['name'],
                 'address' => $userInputs['address'],
                 'about' => $userInputs['about']
-            ]);
+            ];
+            if (isset($userInputs['logo'])) {
+                $rowData['logo_url'] = $userInputs['logo'];
+            }
+            $brand = Brand::create($rowData);
 
             return Response::created([
-                'message' => 'User brand created successfully'
+                'message' => 'User brand created successfully',
+                'brand' => $brand
             ]);
         }
     }
@@ -68,8 +75,19 @@ class BrandController extends Controller
 
         $inputs = $request->all();
 
+        $validator = Validator::make($inputs, [
+            'logo_url' => ['nullable', 'regex:/^https:\/\//']
+        ], [
+            'logo_url.regex' => 'Image URL is not valid'
+        ]);
+        if ($validator->fails()) {
+            return Response::error([
+                'errors' => $validator->errors()
+            ]);
+        }
+
         $updateData = [];
-        foreach (['name', 'address', 'about'] as $k) {
+        foreach (['name', 'address', 'about', 'logo_url'] as $k) {
             if (isset($inputs[$k])) {
                 $updateData[$k] = $inputs[$k];
             }
