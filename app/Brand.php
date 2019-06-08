@@ -10,7 +10,9 @@ class Brand extends Model
         'user_id',
         'name',
         'address',
-        'about'
+        'about',
+        'logo_url',
+        'verified_at'
     ];
 
     static function getByUserId($userId)
