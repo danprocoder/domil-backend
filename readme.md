@@ -69,6 +69,7 @@ Required fields:
 1. Name
 2. Address
 3. About
+4. logo (optional)
 
 Response on success:
 Status code: 201
@@ -86,6 +87,7 @@ Fields:
 1. Name (optional)
 2. Address (optional)
 3. About (optional)
+4. logo_url (optional)
 
 Response on success:
 Status code: 200
