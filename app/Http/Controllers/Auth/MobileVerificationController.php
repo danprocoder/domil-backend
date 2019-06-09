@@ -69,6 +69,8 @@ class MobileVerificationController extends Controller
         $newCode = rand(100000, 999999);
         $user->update(['mobile_verification_code' => $newCode]);
 
+        ActivityLog::create(['user_id' => $user->id, 'activity_type' => 'mobile_verification.new_code_request']);
+
         Sms::sendMessage($user->mobile, $newCode);
 
         return Response::success([
