@@ -41,6 +41,8 @@ class MobileVerificationController extends Controller
                     'mobile_verified_at' => \Carbon\Carbon::now()
                 ]);
 
+                ActivityLog::create(['user_id' => $user->id, 'activity_type' => 'mobile_verification.success']);
+
                 return Response::success([
                     'message' => 'Mobile number verified successfully'
                 ]);
