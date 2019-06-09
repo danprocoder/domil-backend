@@ -27,4 +27,9 @@ class Response
     {
         return response()->json($data, 403)->withHeaders($headers);
     }
+
+    static function notFound($data, $headers=[])
+    {
+        return response()->json($data, 404)->withHeaders($headers);
+    }
 }
