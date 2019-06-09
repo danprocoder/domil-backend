@@ -10,6 +10,7 @@ use App\Brand;
 use App\User;
 use App\Job;
 use App\ActivityLog;
+use App\JobAttachment;
 
 class JobController extends Controller
 {
@@ -17,10 +18,14 @@ class JobController extends Controller
     {
         return Validator::make($data, [
             'title' => 'required',
-            'description' => 'required'
+            'description' => 'required',
+            'attachment' => 'nullable|array',
+            'attachment.*' => 'nullable|regex:/^https:\/\//'
         ], [
             'title.required' => 'Job title is required',
-            'description.required' => 'Job description is required'
+            'description.required' => 'Job description is required',
+            'attachment.array' => 'Attachment field must be an array',
+            'attachment.*.regex' => 'Job attachment URL is not valid'
         ]);
     }
 
@@ -52,6 +57,10 @@ class JobController extends Controller
             'title' => $inputs['title'],
             'description' => $inputs['description']
         ]);
+        // Add attachments
+        if (!empty($inputs['attachment'])) {
+            JobAttachment::addAll($job->id, $inputs['attachment']);
+        }
 
         // Log user's activity
         ActivityLog::create([
@@ -62,8 +71,6 @@ class JobController extends Controller
 
         return Response::success([
             'message' => 'Job posted to '.$brand->name.' successfully',
-            'brand' => $brand,
-            'job' => $job
         ]);
     }
 }
