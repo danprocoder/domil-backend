@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use App\Helpers\Session;
 use App\Helpers\Response;
 use App\Helpers\Sms;
+use App\ActivityLog;
 
 class EditProfileController extends Controller
 {
@@ -50,19 +51,32 @@ class EditProfileController extends Controller
             ]);
         } else {
             $updateData = [];
+            $updatedFields = []; // For activity log
+
             foreach (['firstname', 'lastname', 'email', 'mobile'] as $k) {
-                if (isset($userInput[$k])) {
+                if (!empty($userInput[$k])) {
                     $updateData[$k] = $userInput[$k];
+
+                    $updatedFields[] = $k;
                 }
 
                 // Generate a new verification code for the user if the user changed his/her mobile number.
-                if ($k == 'mobile') {
+                if ($k == 'mobile' && isset($updateData['mobile'])) {
                     $updateData['mobile_verification_code'] = rand(100000, 999999);
                     $updateData['mobile_verified_at'] = null;
                 }
             }
 
             $user->update($updateData);
+
+            // Log user's activity when they update their profile
+            if (count($updatedFields) > 0) {
+                ActivityLog::create([
+                    'user_id' => $user->id,
+                    'activity_type' => 'user.profile_update',
+                    'note' => 'Updated fields: '.implode(', ', $updatedFields)
+                ]);
+            }
 
             // Send new verification code to user if the user updated his/her mobile number.
             if (isset($updateData['mobile'])) {
