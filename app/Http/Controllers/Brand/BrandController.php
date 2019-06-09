@@ -94,12 +94,22 @@ class BrandController extends Controller
         }
 
         $updateData = [];
+        $updatedFields = [];
         foreach (['name', 'address', 'about', 'logo_url'] as $k) {
-            if (isset($inputs[$k])) {
+            if (!empty($inputs[$k])) {
                 $updateData[$k] = $inputs[$k];
+
+                $updatedFields[] = $k;
             }
         }
         $brand->update($updateData);
+
+        ActivityLog::create([
+            'user_id' => $user->id,
+            'activity_type' => 'brand.update',
+            'meta_id' => $brand->id,
+            'note' => 'Updated fields: '.implode(', ', $updatedFields)
+        ]);
 
         return Response::success([
             'message' => 'User brand details updated successfully',
