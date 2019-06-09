@@ -19,6 +19,7 @@ class CreateActivityLogTable extends Migration
             $table->integer('user_id')->unsigned();
             $table->string('activity_type');
             $table->integer('meta_id')->unsigned()->nullable();
+            $table->string('note')->nullable();
 
             $table->timestamps();
         });

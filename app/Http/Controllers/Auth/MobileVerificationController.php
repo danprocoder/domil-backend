@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\Controller;
 use App\Helpers\Response;
 use App\Helpers\Sms;
+use App\ActivityLog;
 
 class MobileVerificationController extends Controller
 {
@@ -40,10 +41,14 @@ class MobileVerificationController extends Controller
                     'mobile_verified_at' => \Carbon\Carbon::now()
                 ]);
 
+                ActivityLog::create(['user_id' => $user->id, 'activity_type' => 'mobile_verification.success']);
+
                 return Response::success([
                     'message' => 'Mobile number verified successfully'
                 ]);
             } else {
+                ActivityLog::create(['user_id' => $user->id, 'activity_type' => 'mobile_verification.incorrect_code']);
+                
                 return Response::error([
                     'message' => 'Mobile verification code is incorrect'
                 ]);
@@ -63,6 +68,8 @@ class MobileVerificationController extends Controller
 
         $newCode = rand(100000, 999999);
         $user->update(['mobile_verification_code' => $newCode]);
+
+        ActivityLog::create(['user_id' => $user->id, 'activity_type' => 'mobile_verification.new_code_request']);
 
         Sms::sendMessage($user->mobile, $newCode);
 

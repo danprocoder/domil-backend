@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers\Auth;
 
-use App\Http\Controllers\Controller;
+use App\User;
+use App\ActivityLog;
 use App\Helpers\Response;
 use App\Helpers\Session;
-use App\User;
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
@@ -51,12 +52,20 @@ class LoginController extends Controller
                 'error' => 'Incorrect email',
             ]);
         } else {
+            // Check user's password
             if (!Hash::check($request->input('password'), $user->password)) {
+                // Log activity if user attempts to log in with an incorrect password.
+                ActivityLog::create(['user_id' => $user->id, 'activity_type' => 'login.failed.incorrect-password']);
+    
                 return Response::error([
                     'error' => 'Incorrect password'
                 ]);
             } else {
                 $sessionToken = Session::create(['user_id' => $user->id]);
+                
+                // Log activity if user logs in successfully
+                ActivityLog::create(['user_id' => $user->id, 'activity_type' => 'login.success']);
+
                 return Response::success([
                     'token' => $sessionToken,
                     'user' => [
