@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\User;
+use App\ActivityLog;
 use App\Http\Controllers\Controller;
 use App\Helpers\Session;
 use App\Helpers\Response;
@@ -99,6 +100,10 @@ class RegisterController extends Controller
             // Send text message to user's mobile number.
             Sms::sendMessage($data['mobile'], $mobileVerCode);
 
+            // Log user's activity
+            ActivityLog::create(['user_id' => $user->id, 'activity_type' => 'user.signup']);
+            
+            // Create new session token for user.
             $token = Session::create([
                 'user_id' => $user->id,
             ]);
