@@ -117,3 +117,20 @@ Response:
     "user": [User object]
 }
 ```
+
+### POST /api/brand/{brand_id}/job
+Post a job to a brand
+
+Fields:
+1. title (required)
+2. description (required)
+3. attachment (optional, array)
+
+Response on success:
+Status code: 200
+Response:
+```
+{
+    "message": "Job posted to [brand name] successfully"
+}
+```

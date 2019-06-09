@@ -15,6 +15,11 @@ class Brand extends Model
         'verified_at'
     ];
 
+    static function getById($id)
+    {
+        return self::where('id', $id)->first();
+    }
+
     static function getByUserId($userId)
     {
         return self::where('user_id', $userId)->first();
