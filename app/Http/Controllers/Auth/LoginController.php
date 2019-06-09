@@ -62,6 +62,10 @@ class LoginController extends Controller
                 ]);
             } else {
                 $sessionToken = Session::create(['user_id' => $user->id]);
+                
+                // Log activity if user logs in successfully
+                ActivityLog::create(['user_id' => $user->id, 'activity_type' => 'login.success']);
+
                 return Response::success([
                     'token' => $sessionToken,
                     'user' => [
