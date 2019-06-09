@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\Controller;
 use App\Helpers\Response;
 use App\Brand;
+use App\ActivityLog;
 
 class BrandController extends Controller
 {
@@ -54,6 +55,12 @@ class BrandController extends Controller
                 $rowData['logo_url'] = $userInputs['logo'];
             }
             $brand = Brand::create($rowData);
+
+            ActivityLog::create([
+                'user_id' => $user->id,
+                'activity_type' => 'brand.create',
+                'meta_id' => $brand->id
+            ]);
 
             return Response::created([
                 'message' => 'User brand created successfully',
