@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\Controller;
 use App\Helpers\Response;
 use App\Helpers\Sms;
+use App\ActivityLog;
 
 class MobileVerificationController extends Controller
 {
@@ -44,6 +45,8 @@ class MobileVerificationController extends Controller
                     'message' => 'Mobile number verified successfully'
                 ]);
             } else {
+                ActivityLog::create(['user_id' => $user->id, 'activity_type' => 'mobile_verification.incorrect_code']);
+                
                 return Response::error([
                     'message' => 'Mobile verification code is incorrect'
                 ]);
