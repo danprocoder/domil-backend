@@ -24,4 +24,9 @@ class JobAttachment extends Model
         }
         self::insert($rows);
     }
+
+    static function getAllByJobId($jobId)
+    {
+        return self::where('job_id', $jobId)->select('id', 'file_url')->get();
+    }
 }

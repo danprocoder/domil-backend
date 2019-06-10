@@ -121,6 +121,9 @@ class JobController extends Controller
 
         ActivityLog::create(['user_id' => $loggedInUser->id, 'activity_type' => $actingAs.'.job.view', 'meta_id' => $jobId]);
 
+        // Get all attachments for job posting
+        $job->attachments = JobAttachment::getAllByJobId($job->id);
+
         return Response::success([
             'job' => $job
         ]);
