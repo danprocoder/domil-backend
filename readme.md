@@ -155,6 +155,20 @@ Status code: 200
 }
 ```
 
+### GET /api/brand/job/{id}
+Get specific job posted to a brand
+
+Response on success:
+Status code: 200
+```json
+{
+    "job": {
+        ...,
+        "attachments: []
+    }
+}
+```
+
 
 ### GET /api/customer/jobs
 Get all jobs posted by the logged in customer
@@ -163,6 +177,20 @@ Response on success:
 Status code: 200
 ```json
 {
-    "jobs": [ ...all jobs ]
+    "jobs": []
+}
+```
+
+### GET /api/customer/job/{id}
+Get specific job posted by customer
+
+Response on success:
+Status code: 200
+```json
+{
+    "job": {
+        ...,
+        "attachments: []
+    }
 }
 ```
