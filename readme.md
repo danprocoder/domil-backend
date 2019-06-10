@@ -1,5 +1,6 @@
 # DOMIL APIs
 
+
 ### POST /api/user/create
 Creates a new user account
 
@@ -18,6 +19,7 @@ Response:
 }
 ```
 
+
 ### POST /api/user/auth
 Authenticates the user
 
@@ -35,6 +37,7 @@ Response:
 }
 ```
 
+
 ### GET /api/user/verify/mobile
 Verify the user's inputted code with the code sent to the user's mobile device on registration.
 
@@ -50,6 +53,7 @@ Response:
 }
 ```
 
+
 ### GET /api/user/mobile-verification-code/resend
 Resend mobile verification code
 
@@ -61,6 +65,7 @@ Response:
     message: 'Mobile verification code resent'
 }
 ```
+
 
 ### POST /api/brand
 Create a user's brand
@@ -79,6 +84,7 @@ Response:
     "message": "User's brand created successfully"
 }
 ```
+
 
 ### PATCH /api/brand
 Update a user's brand details
@@ -99,6 +105,7 @@ Response:
 }
 ```
 
+
 ### PATCH /api/user
 Update a users details
 
@@ -118,6 +125,7 @@ Response:
 }
 ```
 
+
 ### POST /api/brand/{brand_id}/job
 Post a job to a brand
 
@@ -132,5 +140,29 @@ Response:
 ```
 {
     "message": "Job posted to [brand name] successfully"
+}
+```
+
+
+### GET /api/brand/jobs
+Get all jobs posted to the logged in brand
+
+Response on success:
+Status code: 200
+```json
+{
+    "jobs": [ ...all jobs ]
+}
+```
+
+
+### GET /api/customer/jobs
+Get all jobs posted by the logged in customer
+
+Response on success:
+Status code: 200
+```json
+{
+    "jobs": [ ...all jobs ]
 }
 ```
