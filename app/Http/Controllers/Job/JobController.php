@@ -103,4 +103,29 @@ class JobController extends Controller
             'jobs' => $jobs
         ]);
     }
+
+    function getOne(Request $request, $actingAs, $jobId)
+    {
+        $loggedInUser = $request->get('user');
+
+        $job = Job::getById($jobId);
+        if (empty($job)) {
+            return Response::notFound(['message' => 'Requested job was not found']);
+        }
+
+        if (($actingAs == 'customer' && $loggedInUser->id != $job->user_id)
+            || ($actingAs == 'brand' && !Brand::userHasBrand($loggedInUser->id, $job->brand_id))
+        ) {
+            return Response::forbidden(['message' => 'Access forbidden']);
+        }
+
+        ActivityLog::create(['user_id' => $loggedInUser->id, 'activity_type' => $actingAs.'.job.view', 'meta_id' => $jobId]);
+
+        // Get all attachments for job posting
+        $job->attachments = JobAttachment::getAllByJobId($job->id);
+
+        return Response::success([
+            'job' => $job
+        ]);
+    }
 }
