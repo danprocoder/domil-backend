@@ -12,4 +12,14 @@ class Job extends Model
         'title',
         'description'
     ];
+
+    static function getCustomerJobs($customerId)
+    {
+        return self::where('user_id', $customerId)->orderBy('id', 'DESC')->get();
+    }
+
+    static function getBrandJobs($brandId)
+    {
+        return self::where('brand_id', $brandId)->orderBy('id', 'DESC')->get();
+    }
 }
