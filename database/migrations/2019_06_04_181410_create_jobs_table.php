@@ -21,6 +21,8 @@ class CreateJobsTable extends Migration
             $table->string('description');
             $table->integer('price')->nullable();
             $table->string('payment_ref')->nullable();
+            $table->datetime('price_set_at')->nullable();
+            $table->datetime('paid_at')->nullable();
 
             $table->timestamps();
         });
