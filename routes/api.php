@@ -30,3 +30,5 @@ Route::post('/brand/{brand_id}/job', 'Job\JobController@create')->middleware('ch
 Route::get('/brand/jobs', 'Job\JobController@getBrandJobs')->middleware('check_api_token');
 
 Route::get('/customer/jobs', 'Job\JobController@getCustomerJobs')->middleware('check_api_token');
+
+Route::get('/job/{id}', 'Job\JobController@getOne')->middleware('check_api_token');

@@ -24,4 +24,9 @@ class Brand extends Model
     {
         return self::where('user_id', $userId)->first();
     }
+
+    static function userHasBrand($userId, $brandId)
+    {
+        return self::where('user_id', $userId)->where('id', $brandId)->first() != null;
+    }
 }

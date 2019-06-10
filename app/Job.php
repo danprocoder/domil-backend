@@ -22,4 +22,9 @@ class Job extends Model
     {
         return self::where('brand_id', $brandId)->orderBy('id', 'DESC')->get();
     }
+
+    static function getById($jobId)
+    {
+        return self::where('id', $jobId)->first();
+    }
 }

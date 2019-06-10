@@ -103,4 +103,22 @@ class JobController extends Controller
             'jobs' => $jobs
         ]);
     }
+
+    function getOne(Request $request, $jobId)
+    {
+        $loggedInUser = $request->get('user');
+
+        $job = Job::getById($jobId);
+        if (empty($job)) {
+            return Response::notFound(['message' => 'Requested job was not found']);
+        }
+
+        if ($loggedInUser->id != $job->user_id && !Brand::userHasBrand($loggedInUser->id, $job->brand_id)) {
+            return Response::forbidden(['message' => 'Access forbidden']);
+        }
+
+        return Response::success([
+            'job' => $job
+        ]);
+    }
 }
