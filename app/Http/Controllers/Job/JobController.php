@@ -73,4 +73,34 @@ class JobController extends Controller
             'message' => 'Job posted to '.$brand->name.' successfully',
         ]);
     }
+
+    function getBrandJobs(Request $request)
+    {
+        $loggedInUser = $request->get('user');
+        $brand = Brand::getByUserId($loggedInUser->id);
+        if (!$brand) {
+            return Response::error(['message' => 'You don\'t have a brand']);
+        }
+
+        ActivityLog::create(['user_id' => $loggedInUser->id, 'activity_type' => 'brand.jobs.view-requests']);
+
+        $jobs = Job::getBrandJobs($brand->id);
+
+        return Response::success([
+            'jobs' => $jobs
+        ]);
+    }
+
+    function getCustomerJobs(Request $request)
+    {
+        $loggedInUser = $request->get('user');
+
+        ActivityLog::create(['user_id' => $loggedInUser->id, 'activity_type' => 'customer.jobs.view-posted']);
+        
+        $jobs = Job::getCustomerJobs($loggedInUser->id);
+
+        return Response::success([
+            'jobs' => $jobs
+        ]);
+    }
 }

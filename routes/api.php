@@ -27,3 +27,6 @@ Route::post('/brand', 'Brand\BrandController@create')->middleware('check_api_tok
 Route::patch('/brand', 'Brand\BrandController@update')->middleware('check_api_token');
 
 Route::post('/brand/{brand_id}/job', 'Job\JobController@create')->middleware('check_api_token');
+Route::get('/brand/jobs', 'Job\JobController@getBrandJobs')->middleware('check_api_token');
+
+Route::get('/customer/jobs', 'Job\JobController@getCustomerJobs')->middleware('check_api_token');
