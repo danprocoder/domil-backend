@@ -104,7 +104,7 @@ class JobController extends Controller
         ]);
     }
 
-    function getOne(Request $request, $jobId)
+    function getOne(Request $request, $actingAs, $jobId)
     {
         $loggedInUser = $request->get('user');
 
@@ -113,9 +113,13 @@ class JobController extends Controller
             return Response::notFound(['message' => 'Requested job was not found']);
         }
 
-        if ($loggedInUser->id != $job->user_id && !Brand::userHasBrand($loggedInUser->id, $job->brand_id)) {
+        if (($actingAs == 'customer' && $loggedInUser->id != $job->user_id)
+            || ($actingAs == 'brand' && !Brand::userHasBrand($loggedInUser->id, $job->brand_id))
+        ) {
             return Response::forbidden(['message' => 'Access forbidden']);
         }
+
+        ActivityLog::create(['user_id' => $loggedInUser->id, 'activity_type' => $actingAs.'.job.view', 'meta_id' => $jobId]);
 
         return Response::success([
             'job' => $job

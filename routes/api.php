@@ -31,4 +31,4 @@ Route::get('/brand/jobs', 'Job\JobController@getBrandJobs')->middleware('check_a
 
 Route::get('/customer/jobs', 'Job\JobController@getCustomerJobs')->middleware('check_api_token');
 
-Route::get('/job/{id}', 'Job\JobController@getOne')->middleware('check_api_token');
+Route::get('/{acting_as}/job/{id}', 'Job\JobController@getOne')->where('acting_as', '^(brand|customer)$')->middleware('check_api_token');
