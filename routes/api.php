@@ -31,5 +31,6 @@ Route::get('/brand/jobs', 'Job\JobController@getBrandJobs')->middleware('check_a
 Route::patch('/brand/job/{id}/price', 'Job\JobPaymentController@setPrice')->middleware('check_api_token');
 
 Route::get('/customer/jobs', 'Job\JobController@getCustomerJobs')->middleware('check_api_token');
+Route::patch('/customer/job/{id}/verify-payment', 'Job\JobPaymentController@verifyPayment')->middleware('check_api_token');
 
 Route::get('/{acting_as}/job/{id}', 'Job\JobController@getOne')->where('acting_as', '^(brand|customer)$')->middleware('check_api_token');
