@@ -69,6 +69,7 @@ class JobPaymentController extends Controller
         ]);
 
         return Response::success([
+            'message' => 'Price for job set successfully',
             'job' => $job
         ]);
     }

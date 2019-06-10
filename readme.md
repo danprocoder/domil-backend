@@ -169,6 +169,18 @@ Status code: 200
 }
 ```
 
+### PATCH /api/brand/job/{id}/price
+Set the price for a specific job
+
+Response on success:
+Status code: 200
+```json
+{
+    "message": "Price for job set successfully",
+    "job": {}
+}
+```
+
 
 ### GET /api/customer/jobs
 Get all jobs posted by the logged in customer
