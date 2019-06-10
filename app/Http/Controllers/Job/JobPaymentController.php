@@ -5,11 +5,14 @@ namespace App\Http\Controllers\Job;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Yabacon\Paystack;
 use App\Http\Controllers\Controller;
 use App\Helpers\Response;
 use App\Job;
 use App\Brand;
 use App\ActivityLog;
+use App\Wallet;
+use App\Revenue;
 
 class JobPaymentController extends Controller
 {
@@ -71,6 +74,92 @@ class JobPaymentController extends Controller
         return Response::success([
             'message' => 'Price for job set successfully',
             'job' => $job
+        ]);
+    }
+
+    function verifyPayment(Request $request, $jobId)
+    {
+        $loggedInUser = $request->get('user');
+
+        $job = Job::getById($jobId);
+        if (empty($job)) {
+            return Response::notFound(['message' => 'Job does not exists']);
+        }
+
+        if ($loggedInUser->id != $job->user_id) {
+            return Response::forbidden(['message' => 'Access forbidden']);
+        }
+
+        // Payment can only be verified once to avoid creditting brands multiple times.
+        if (!empty($job->paid_at)) {
+            return Response::error(['message' => 'Payment already verified']);
+        }
+
+        $paystack = new Paystack(config('paystack.secret_key'));
+        try {
+            $tranx = $paystack->transaction->verify([
+                'reference' => $job->payment_ref
+            ]);
+        } catch (Paystack\Exception\ApiException $e) {
+            return Response::error([
+                'error' => $e->getResponseObject()
+            ]);
+        }
+
+        if ($tranx->data->status === 'success') {
+            if ($tranx->data->amount != $job->price) {
+                return Response::error(['message' => 'The right amount was not paid']);
+            }
+
+            /*
+             * Credit the brand
+             */
+            $brand = Brand::getById($job->brand_id);
+            $brandShare = floor((70 / 100) * $tranx->data->amount);
+
+            $balance = Wallet::getUserCurrentBalance($brand->user_id);
+            Wallet::create([
+                'user_id' => $brand->user_id,
+                'brand_id' => $job->brand_id,
+                'type' => Wallet::TRANSACTION_TYPE_CREDIT,
+                'amount' => $brandShare,
+                'balance' => $balance + $brandShare
+            ]);
+
+            /*
+             * Add remaining to company's revenue
+             */
+            $this->addToCompanyRevenue($tranx->data->amount - $brandShare);
+
+            // Log user's activity
+            ActivityLog::create([
+                'user_id' => $loggedInUser->id,
+                'activity_type' => 'customer.job.paid',
+                'meta_id' => $job->id
+            ]);
+            
+            // Update job record.
+            $job->update([
+                'paid_at' => Carbon::parse($tranx->data->paid_at)
+            ]);
+
+            return Response::success([
+                'message' => 'Payment verified successfully',
+                'job' => $job
+            ]);
+        } else {
+            return Response::error([
+                'tranx' => $tranx
+            ]);
+        }
+    }
+
+    private function addToCompanyRevenue($amount)
+    {
+        $balance = Revenue::getCurrentBalance();
+        Revenue::create([
+            'amount' => $amount,
+            'balance' => $balance + $amount
         ]);
     }
 }

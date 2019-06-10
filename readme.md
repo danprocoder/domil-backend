@@ -206,3 +206,15 @@ Status code: 200
     }
 }
 ```
+
+### PATCH /customer/job/{id}/verify-payment
+Verify the payment reference. If payment was successful, the brand is creditted and the company's revenue is updated.
+
+Response on success:
+Status code: 200
+```json
+{
+    "message": "Payment verified successfully",
+    "job": {}
+}
+```
