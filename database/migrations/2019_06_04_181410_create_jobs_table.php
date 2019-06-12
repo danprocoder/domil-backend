@@ -21,9 +21,13 @@ class CreateJobsTable extends Migration
             $table->string('description');
             $table->integer('price')->nullable();
             $table->string('payment_ref')->nullable();
-            $table->datetime('price_set_at')->nullable();
-            $table->datetime('paid_at')->nullable();
-
+            $table->timestamp('price_set_at')->nullable();
+            $table->timestamp('paid_at')->nullable();
+            $table->integer('customer_payment_id')->unsigned()->nullable();
+            $table->decimal('customer_rating', 1, 1)->nullable();
+            $table->timestamp('rated_at')->nullable();
+            $table->timestamp('delivered_at')->nullable();
+            $table->enum('current_status', ['in-progress', 'completed', 'delivered'])->nullable();
             $table->timestamps();
         });
     }

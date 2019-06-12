@@ -14,7 +14,9 @@ class Job extends Model
         'price',
         'payment_ref',
         'price_set_at',
-        'paid_at'
+        'paid_at',
+        'customer_payment_id',
+        'current_status'
     ];
 
     static function getCustomerJobs($customerId)
