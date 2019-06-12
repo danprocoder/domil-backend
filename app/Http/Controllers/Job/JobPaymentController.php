@@ -11,7 +11,7 @@ use App\Helpers\Response;
 use App\Job;
 use App\Brand;
 use App\ActivityLog;
-use App\Wallet;
+use App\CustomerPayment;
 use App\Revenue;
 
 class JobPaymentController extends Controller
@@ -107,40 +107,42 @@ class JobPaymentController extends Controller
         }
 
         if ($tranx->data->status === 'success') {
-            if ($tranx->data->amount != $job->price) {
+            $amountPaid = $tranx->data->amount;
+
+            if ($amountPaid != $job->price) {
                 return Response::error(['message' => 'The right amount was not paid']);
             }
 
             /*
-             * Credit the brand
+             * Insert into customer payments
              */
             $brand = Brand::getById($job->brand_id);
-            $brandShare = floor((70 / 100) * $tranx->data->amount);
+            $brandShare = floor((80 / 100) * $amountPaid);
+            $companyShare = $amountPaid - $brandShare;
 
-            $balance = Wallet::getUserCurrentBalance($brand->user_id);
-            Wallet::create([
-                'user_id' => $brand->user_id,
-                'brand_id' => $job->brand_id,
-                'type' => Wallet::TRANSACTION_TYPE_CREDIT,
-                'amount' => $brandShare,
-                'balance' => $balance + $brandShare
+            $customerPaymentId = CustomerPayment::create([
+                'customer_id' => $loggedInUser->id,
+                'brand_id' => $brand->id,
+                'total_amount' => $amountPaid,
+                'brand_share' => $brandShare,
+                'company_share' => $companyShare,
+                'meta_for' => 'job',
+                'meta_id' => $job->id,
+                'payment_ref' => $job->payment_ref
+            ])->id;
+            
+            // Update job record.
+            $job->update([
+                'paid_at' => Carbon::parse($tranx->data->paid_at),
+                'customer_payment_id' => $customerPaymentId,
+                'current_status' => 'in-progress'
             ]);
-
-            /*
-             * Add remaining to company's revenue
-             */
-            $this->addToCompanyRevenue($tranx->data->amount - $brandShare);
 
             // Log user's activity
             ActivityLog::create([
                 'user_id' => $loggedInUser->id,
                 'activity_type' => 'customer.job.paid',
                 'meta_id' => $job->id
-            ]);
-            
-            // Update job record.
-            $job->update([
-                'paid_at' => Carbon::parse($tranx->data->paid_at)
             ]);
 
             return Response::success([
@@ -152,14 +154,5 @@ class JobPaymentController extends Controller
                 'tranx' => $tranx
             ]);
         }
-    }
-
-    private function addToCompanyRevenue($amount)
-    {
-        $balance = Revenue::getCurrentBalance();
-        Revenue::create([
-            'amount' => $amount,
-            'balance' => $balance + $amount
-        ]);
     }
 }

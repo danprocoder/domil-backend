@@ -21,6 +21,7 @@ class CreateBrandsTable extends Migration
             $table->string('address');
             $table->string('about');
             $table->timestamp('verified_at')->nullable();
+            $table->decimal('average_rating', 1, 1)->nullable();
             $table->timestamps();
         });
     }
