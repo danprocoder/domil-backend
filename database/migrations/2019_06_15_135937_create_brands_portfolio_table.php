@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateActivityLogTable extends Migration
+class CreateBrandsPortfolioTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,15 +13,11 @@ class CreateActivityLogTable extends Migration
      */
     public function up()
     {
-        Schema::create('activity_log', function (Blueprint $table) {
+        Schema::create('brands_portfolio', function (Blueprint $table) {
             $table->bigIncrements('id');
-
-            $table->string('session_id')->nullable();
-            $table->integer('user_id')->unsigned();
-            $table->string('activity_type');
-            $table->integer('meta_id')->unsigned()->nullable();
-            $table->string('note')->nullable();
-
+            $table->integer('brand_id')->unsigned();
+            $table->string('image_url');
+            $table->string('caption')->nullable();
             $table->timestamps();
         });
     }
@@ -33,6 +29,6 @@ class CreateActivityLogTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('activity_log');
+        Schema::dropIfExists('brands_portfolio');
     }
 }

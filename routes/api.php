@@ -29,6 +29,7 @@ Route::patch('/brand', 'Brand\BrandController@update')->middleware('check_api_to
 Route::post('/brand/{brand_id}/job', 'Job\JobController@create')->middleware('check_api_token');
 Route::get('/brand/jobs', 'Job\JobController@getBrandJobs')->middleware('check_api_token');
 Route::patch('/brand/job/{id}/price', 'Job\JobPaymentController@setPrice')->middleware('check_api_token');
+Route::post('/brand/{id}/portfolio', 'Brand\BrandPortfolioController@create')->middleware('check_api_token');
 
 Route::get('/customer/jobs', 'Job\JobController@getCustomerJobs')->middleware('check_api_token');
 Route::patch('/customer/job/{id}/verify-payment', 'Job\JobPaymentController@verifyPayment')->middleware('check_api_token');
