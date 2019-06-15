@@ -25,6 +25,7 @@ Route::patch('/user', 'Auth\EditProfileController@update')->middleware('check_ap
 
 Route::post('/brand', 'Brand\BrandController@create')->middleware('check_api_token');
 Route::patch('/brand', 'Brand\BrandController@update')->middleware('check_api_token');
+Route::get('/brand/{id}', 'Brand\BrandController@getDetails')->middleware('check_session_silent');
 
 Route::post('/brand/{brand_id}/job', 'Job\JobController@create')->middleware('check_api_token');
 Route::get('/brand/jobs', 'Job\JobController@getBrandJobs')->middleware('check_api_token');

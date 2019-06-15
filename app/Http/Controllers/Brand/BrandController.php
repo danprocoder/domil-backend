@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\Controller;
 use App\Helpers\Response;
 use App\Brand;
-use App\ActivityLog;
+use App\Helpers\ActivityLog;
 
 class BrandController extends Controller
 {
@@ -56,11 +56,8 @@ class BrandController extends Controller
             }
             $brand = Brand::create($rowData);
 
-            ActivityLog::create([
-                'user_id' => $user->id,
-                'activity_type' => 'brand.create',
-                'meta_id' => $brand->id
-            ]);
+            // Log user's activity
+            ActivityLog::log($request, 'brand.create', $brand->id);
 
             return Response::created([
                 'message' => 'User brand created successfully',
@@ -104,16 +101,34 @@ class BrandController extends Controller
         }
         $brand->update($updateData);
 
-        ActivityLog::create([
-            'user_id' => $user->id,
-            'activity_type' => 'brand.update',
-            'meta_id' => $brand->id,
-            'note' => 'Updated fields: '.implode(', ', $updatedFields)
-        ]);
+        // Log user's activity
+        ActivityLog::log($request, 'brand.update', $brand->id, 'Updated fields: '.implode(', ', $updatedFields));
 
         return Response::success([
             'message' => 'User brand details updated successfully',
             'brand' => $brand
+        ]);
+    }
+
+    function getDetails(Request $request, $brandId)
+    {
+        $loggedInUser = $request->get('user');
+
+        $brand = Brand::find($brandId);
+        if (!$brand) {
+            return Response::notFound([
+                'message' => 'Brand does not exists'
+            ]);
+        }
+
+        // Logged user activity if user is logged in.
+        if ($loggedInUser) {
+            ActivityLog::log($request, 'brand.view', $brandId);
+        }
+
+        return Response::success([
+            'brand' => $brand,
+            'by_current_user' => $loggedInUser && $loggedInUser->id == $brand->user_id
         ]);
     }
 }
