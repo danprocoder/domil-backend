@@ -62,4 +62,33 @@ class BrandPortfolioController extends Controller
             'items_added' => count($input['item']),
         ]);
     }
+
+    function removeOne(Request $request, $brandId, $itemId)
+    {
+        $loggedInUser = $request->get('user');
+
+        // User must be the owner of the brand
+        if (!Brand::userHasBrand($loggedInUser->id, $brandId)) {
+            return Response::forbidden([
+                'message' => 'Access forbidden'
+            ]);
+        }
+
+        $item = BrandPortfolio::getBrandItem($brandId, $itemId);
+        if (!$item) {
+            return Response::notFound([
+                'message' => 'Portfolio item was not found'
+            ]);
+        }
+
+        // Delete the item.
+        $item->delete();
+
+        // Log user's activity
+        ActivityLog::log($request, 'brand.portfolio.delete', $brandId);
+
+        return Response::success([
+            'message' => 'Portfolio item deleted successfully',
+        ]);
+    }
 }

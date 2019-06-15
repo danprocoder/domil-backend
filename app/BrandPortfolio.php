@@ -24,4 +24,9 @@ class BrandPortfolio extends Model
         }
         return self::insert($rows);
     }
+
+    public static function getBrandItem($brandId, $itemId)
+    {
+        return self::where('brand_id', $brandId)->where('id', $itemId)->first();
+    }
 }

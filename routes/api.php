@@ -30,6 +30,7 @@ Route::post('/brand/{brand_id}/job', 'Job\JobController@create')->middleware('ch
 Route::get('/brand/jobs', 'Job\JobController@getBrandJobs')->middleware('check_api_token');
 Route::patch('/brand/job/{id}/price', 'Job\JobPaymentController@setPrice')->middleware('check_api_token');
 Route::post('/brand/{id}/portfolio', 'Brand\BrandPortfolioController@create')->middleware('check_api_token');
+Route::delete('/brand/{id}/portfolio/{item_id}', 'Brand\BrandPortfolioController@removeOne')->middleware("check_api_token");
 
 Route::get('/customer/jobs', 'Job\JobController@getCustomerJobs')->middleware('check_api_token');
 Route::patch('/customer/job/{id}/verify-payment', 'Job\JobPaymentController@verifyPayment')->middleware('check_api_token');
