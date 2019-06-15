@@ -61,7 +61,7 @@ class LoginController extends Controller
                     'error' => 'Incorrect password'
                 ]);
             } else {
-                $sessionToken = Session::create(['user_id' => $user->id]);
+                $sessionToken = Session::create($request, $user->id);
                 
                 // Log activity if user logs in successfully
                 ActivityLog::create(['user_id' => $user->id, 'activity_type' => 'login.success']);

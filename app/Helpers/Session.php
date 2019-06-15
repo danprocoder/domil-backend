@@ -2,19 +2,28 @@
 namespace App\Helpers;
 
 use Carbon\Carbon;
+use App\Session as SessionModel;
 
 class Session
 {
-    static function create($data)
+    static function create($request, $userId)
     {
-        $data['expires'] = Carbon::now()->addDays(5);
+        $sessionToken = 'auth-'.md5($userId.microtime());
 
-        return base64_encode(json_encode($data));
+        $data = [
+            'session_id' => md5($sessionToken),
+            'user_id' => $userId,
+            'ip_address' => $request->ip(),
+            'user_agent' => $request->server('HTTP_USER_AGENT'),
+            'expires' => Carbon::now()->addDays(5)
+        ];
+        SessionModel::create($data);
+
+        return $sessionToken;
     }
     
     static function verify($token)
     {
-        $data = json_decode(base64_decode($token));
-        return $data;
+        return SessionModel::find(md5($token));
     }
 }
