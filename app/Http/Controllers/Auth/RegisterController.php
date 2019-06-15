@@ -104,9 +104,7 @@ class RegisterController extends Controller
             ActivityLog::create(['user_id' => $user->id, 'activity_type' => 'user.signup']);
             
             // Create new session token for user.
-            $token = Session::create([
-                'user_id' => $user->id,
-            ]);
+            $token = Session::create($request, $user->id);
 
             return Response::created([
                 'token' => $token,

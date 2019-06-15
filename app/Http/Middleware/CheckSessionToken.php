@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use Closure;
+use Carbon\Carbon;
 use App\Helpers\Response;
 use App\Helpers\Session;
 use App\User;
@@ -34,6 +35,9 @@ class CheckSessionToken
                 return Response::unauthorized(['message' => 'User does not exists']);
             }
 
+            $sessionData->update([
+                'expires' => Carbon::now()->addDays(5)
+            ]);
             $request->attributes->add(['user' => $user]);
         }
 

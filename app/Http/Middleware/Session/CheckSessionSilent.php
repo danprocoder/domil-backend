@@ -3,6 +3,7 @@
 namespace App\Http\Middleware\Session;
 
 use Closure;
+use Carbon\Carbon;
 use App\Helpers\Session;
 use App\User;
 
@@ -39,6 +40,11 @@ class CheckSessionSilent
         if (!$user) {
             return $next($request);
         }
+
+        // Update session expiration time
+        $sessionData->update([
+            'expires' => Carbon::now()->addDays(5)
+        ]);
 
         $request->attributes->add([
             'session_data' => $sessionData,
