@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\Controller;
 use App\Helpers\Response;
 use App\Brand;
+use App\BrandPortfolio;
 use App\Helpers\ActivityLog;
 
 class BrandController extends Controller
@@ -121,6 +122,9 @@ class BrandController extends Controller
             ]);
         }
 
+        // Get 6 most recent items in portfolio
+        $portfolio = BrandPortfolio::where('brand_id', $brandId)->orderBy('id', 'DESC')->limit(6)->get();
+
         // Logged user activity if user is logged in.
         if ($loggedInUser) {
             ActivityLog::log($request, 'brand.view', $brandId);
@@ -128,7 +132,8 @@ class BrandController extends Controller
 
         return Response::success([
             'brand' => $brand,
-            'by_current_user' => $loggedInUser && $loggedInUser->id == $brand->user_id
+            'portfolio' => $portfolio,
+            'by_current_user' => $loggedInUser && $loggedInUser->id == $brand->user_id,
         ]);
     }
 }
