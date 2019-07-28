@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Auth;
 
+use Mail;
 use App\User;
 use App\ActivityLog;
 use App\Http\Controllers\Controller;
@@ -99,6 +100,12 @@ class RegisterController extends Controller
             
             // Send text message to user's mobile number.
             Sms::sendMessage($data['mobile'], $mobileVerCode);
+
+            // Send email to verify email address
+            Mail::send('emails.user.newuser', ['user' => $user], function($m) use ($user) {
+                $m->from('noreply@domil.com', 'DOMIL');
+                $m->to($user->email, NULL)->subject('Welcome to DOMIL');
+            });
 
             // Log user's activity
             ActivityLog::create(['user_id' => $user->id, 'activity_type' => 'user.signup']);
