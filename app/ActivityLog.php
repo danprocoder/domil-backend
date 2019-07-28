@@ -13,6 +13,8 @@ class ActivityLog extends Model
         'user_id',
         'activity_type',
         'meta_id',
+        'user_agent',
+        'ip',
         'note'
     ];
 }

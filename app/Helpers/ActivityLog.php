@@ -14,6 +14,8 @@ class ActivityLog
             'activity_type' => $activityType,
             'meta_id' => $metaId,
             'note' => $note,
+            'user_agent' => $request->server('HTTP_USER_AGENT'),
+            'ip' => $request->ip(),
             'session_id' => md5($sessionToken)
         ]);
     }
